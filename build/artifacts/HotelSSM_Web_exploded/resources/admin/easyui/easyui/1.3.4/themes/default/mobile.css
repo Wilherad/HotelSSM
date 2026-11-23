@@ -1,0 +1,80 @@
+
+/* =========================================================
+   login.css —— 移动端优先适配版（万林酒店 登录页）
+   适配要点：
+   1. 配合页面 <meta viewport> 生效；用 %/max-width 代替固定像素宽度
+   2. 左右分栏在手机上改为上下堆叠，登录框居中、占满可用宽度
+   3. 输入框 / 验证码 / 按钮用 flex + 百分比，杜绝横向溢出
+   4. box-sizing:border-box + 图片 max-width:100%
+   ========================================================= */
+
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0; width: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    color: #333; background: #f5f6f8;
+}
+img { max-width: 100%; height: auto; border: 0; }
+a { text-decoration: none; color: #2d8cf0; }
+
+/* header */
+header {
+    width: 100%; height: 56px; line-height: 56px; padding: 0 16px;
+    background: #fff; border-bottom: 1px solid #eee;
+    display: flex; align-items: center;
+}
+header > div { display: flex; align-items: center; }
+header img { height: 36px; width: auto; margin-right: 10px; }
+header span { font-size: 18px; font-weight: 600; color: #2d3a4b; }
+
+/* section */
+section {
+    width: 100%; max-width: 960px; margin: 0 auto; padding: 24px 16px;
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: center; gap: 24px;
+}
+section .left { flex: 1 1 100%; text-align: center; }
+section .left img { width: 100%; max-width: 420px; border-radius: 8px; }
+
+section .login {
+    flex: 0 1 360px; width: 100%; max-width: 360px;
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06); padding: 28px 22px 32px;
+}
+#normal ul { list-style: none; margin: 0; padding: 0; }
+#normal li { margin-top: 18px; position: relative; }
+
+.login input[type="text"],
+.login input[type="password"] {
+    width: 100%; height: 44px; line-height: 44px; padding: 0 12px;
+    border: 1px solid #dcdfe6; border-radius: 6px; font-size: 15px;
+    outline: none; background: #fafbfc;
+}
+.login input:focus { border-color: #2d8cf0; background: #fff; }
+
+.codes { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.codes #vcode { flex: 1; min-width: 0; }
+.codes #cpacha-img { flex: 0 0 auto; height: 44px; width: auto; border-radius: 6px; cursor: pointer; }
+
+.log {
+    margin-top: 24px; height: 46px; line-height: 46px; text-align: center;
+    background: #2d8cf0; color: #fff; font-size: 16px; border-radius: 6px;
+    cursor: pointer; user-select: none; transition: background .2s;
+}
+.log:active { background: #1c7be0; }
+
+.reg { flex: 1 1 100%; text-align: center; margin-top: 8px; font-size: 14px; }
+footer { width: 100%; }
+
+/* 平板以下：左右堆叠，隐藏大图突出登录 */
+@media (max-width: 768px) {
+    section { flex-direction: column; gap: 18px; padding: 18px 14px; }
+    section .left { display: none; }
+    section .login { flex: 0 0 auto; max-width: 100%; }
+    header span { font-size: 16px; }
+}
+@media (max-width: 380px) {
+    section .login { padding: 22px 16px 26px; }
+    .log { height: 44px; line-height: 44px; }
+}

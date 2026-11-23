@@ -1,0 +1,207 @@
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- 移动端适配：视口设置，需放在 head 顶部 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="Author" content="万林酒店">
+    <meta name="Keywords" content="酒店管理系统">
+    <meta name="Description" content="酒店管理系统">
+    <link href="../resources/home/css/reservation.css" type="text/css" rel="Stylesheet"/>
+    <link href="../resources/home/css/index.css" type="text/css" rel="Stylesheet"/>
+    <title>万林酒店|酒店管理系统首页</title>
+
+    <!-- ===== 移动端适配样式（内联，覆盖外部 CSS；PC 端外观基本不变） ===== -->
+    <style>
+        /* 全局：禁止横向溢出 */
+        html, body { max-width: 100%; overflow-x: hidden; }
+        img { max-width: 100%; }
+
+        /* 横幅图：由固定 1200x256 改为按比例自适应 */
+        #subject { width: 100%; }
+        #subject > img { width: 100%; height: auto; display: block; }
+
+        /* 登录/注册条：取消右侧浮动，手机端换行排布更友好 */
+        #subject > p { float: none; text-align: right; padding: 6px 10px; }
+
+        /* 内容区左右内边距自适应 */
+        #due_menu, #guest_rooms { width: 100%; box-sizing: border-box; }
+
+        /* 搜索框：占满可用宽度 */
+        .chioce { display: flex; flex-wrap: wrap; gap: 8px; box-sizing: border-box; padding: 0 10px; }
+        .chioce input[type="text"] { flex: 1 1 60%; min-width: 0; box-sizing: border-box; }
+        .chioce input[type="button"] { flex: 0 0 auto; }
+
+        /* 表格容器：小屏可横向滚动，避免被挤压变形 */
+        #guest_rooms { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* 卡片布局（默认隐藏，仅手机端显示） */
+        .room-cards { display: none; padding: 10px; box-sizing: border-box; }
+        .room-card {
+            border: 1px solid #e2e2e2; border-radius: 8px;
+            margin-bottom: 12px; overflow: hidden; background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        .room-card .rc-photo img { width: 100%; height: 160px; object-fit: cover; display: block; }
+        .room-card .rc-body { padding: 10px 12px; }
+        .room-card .rc-title { font-size: 16px; font-weight: bold; margin: 0 0 4px; }
+        .room-card .rc-remark { color: #888; font-size: 13px; margin: 0 0 10px; line-height: 1.5; }
+        .room-card .rc-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #555; margin-bottom: 10px; }
+        .room-card .rc-meta b { color: #d9534f; font-size: 16px; }
+        .room-card .rc-foot { display: flex; align-items: center; justify-content: space-between; }
+        .room-card .rc-status { font-size: 13px; }
+        .room-card .rc-status .full { color: #999; }
+        .room-card .rc-status .ok { color: #2a9f4b; }
+        .room-card .rc-btn {
+            border: none; border-radius: 20px; padding: 8px 22px;
+            background: #d9534f; color: #fff; font-size: 14px; cursor: pointer;
+        }
+        .room-card .rc-btn.disable { background: #ccc; color: #fff; cursor: not-allowed; }
+
+        /* 手机端断点 */
+        @media screen and (max-width: 768px) {
+            .shade_mag { display: none !important; }   /* 隐藏固定定位装饰遮罩，避免错位遮挡 */
+            #subject > p { text-align: center; }
+            #pro_list { display: none !important; }     /* 隐藏 7 列宽表格 */
+            .room-cards { display: block !important; }  /* 改用纵向卡片 */
+        }
+    </style>
+</head>
+<body>
+<!--头部-->
+<div id="c_header"></div>
+<!--主体内容-->
+<section>
+    <div id="subject">
+        <p style="float:right;">
+            <c:if test="${account == null }">
+                <a href="../home/login">登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="../home/reg">注册</a>&nbsp;
+            </c:if>
+            <c:if test="${account != null }">
+                <font color="red">欢迎您：${account.name }&nbsp;&nbsp;|&nbsp;&nbsp;</font>
+                <a href="account/index">用户中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="../home/logout">注销登录</a>&nbsp;
+            </c:if>
+        </p>
+        <img src="../resources/home/images\indexIMG.png" alt="" height="256px" width="1200px">
+        <!--遮罩-->
+        <ul class="shade_mag">
+            <li><img src="../resources/home/images\s_02.png" alt=""></li>
+            <li><img src="../resources/home/images\s_01.png" alt=""></li>
+        </ul>
+
+    </div>
+
+
+    <!---->
+    <!---预订菜单--->
+    <div id="due_menu">
+        <!--关于-->
+
+        <!--客房-->
+        <div id="guest_rooms">
+            <p class="booking_tab"><span></span>客房列表</p>
+            <div class="chioce">
+                <input type="text" placeholder="关键字" value="${kw }" id="kw"/>
+                <input type="button" value="搜索" id="search-btn"/>
+            </div>
+            <form style="display:none;" action="index" method="get" id="search-form"><input type="hidden" name="name" id="search-name"></form>
+            <!--列表（PC 表格）-->
+            <table id="pro_list" >
+                <thead>
+                <tr>
+                    <th width="200px">客房</th>
+                    <th>房型</th>
+                    <th>可住人数</th>
+                    <th>床位数</th>
+                    <th>房价</th>
+                    <th>房态</th>
+                    <th>预订</th>
+                </tr>
+                </thead>
+                <tbody >
+                <c:forEach items="${roomTypeList }" var="roomType">
+                    <tr>
+                        <td><a href="#"><img src="${roomType.photo }" alt=""></a>
+                        </td>
+                        <td align="center">
+                            <p>${roomType.name }</p>
+                            <p class="sub_txt">${roomType.remark }</p>
+                        </td>
+                        <td>${roomType.liveNum }</td>
+                        <td>${roomType.bedNum }</td>
+                        <td>${roomType.price }</td>
+                        <td>
+                            <c:if test="${roomType.status == 0 }">
+                                已满房
+                            </c:if>
+                            <c:if test="${roomType.status == 1 }">
+                                可预订
+                            </c:if>
+                        </td>
+                        <td>
+                            <c:if test="${roomType.status == 0 }">
+                                <input type="button" class="disable" value="满房" >
+                            </c:if>
+                            <c:if test="${roomType.status == 1 }">
+                                <input type="button" value="预订" onclick="window.location.href='account/book_order?roomTypeId=${roomType.id }'" >
+                            </c:if>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+
+            <!--列表（移动端卡片，与上方表格共用同一份数据，由 CSS 媒体查询二选一显示）-->
+            <div class="room-cards">
+                <c:forEach items="${roomTypeList }" var="roomType">
+                    <div class="room-card">
+                        <div class="rc-photo"><img src="${roomType.photo }" alt=""></div>
+                        <div class="rc-body">
+                            <p class="rc-title">${roomType.name }</p>
+                            <p class="rc-remark">${roomType.remark }</p>
+                            <div class="rc-meta">
+                                <span>房价 <b>￥${roomType.price }</b></span>
+                                <span>可住 ${roomType.liveNum } 人</span>
+                                <span>床位 ${roomType.bedNum }</span>
+                            </div>
+                            <div class="rc-foot">
+                <span class="rc-status">
+                  <c:if test="${roomType.status == 0 }"><span class="full">已满房</span></c:if>
+                  <c:if test="${roomType.status == 1 }"><span class="ok">可预订</span></c:if>
+                </span>
+                                <c:if test="${roomType.status == 0 }">
+                                    <input type="button" class="rc-btn disable" value="满房">
+                                </c:if>
+                                <c:if test="${roomType.status == 1 }">
+                                    <input type="button" class="rc-btn" value="预订"
+                                           onclick="window.location.href='account/book_order?roomTypeId=${roomType.id }'">
+                                </c:if>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <div id="pages"></div>
+            <!--  -列表菜单 -->
+            <div></div>
+        </div>
+    </div>
+
+</section>
+<%@include file="../common/footer.jsp"%>
+<script src="../resources/home/js/jquery-1.11.3.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#search-btn").click(function(){
+            $("#search-name").val($("#kw").val());
+            $("#search-form").submit();
+        })
+    });
+</script>
+</body>
